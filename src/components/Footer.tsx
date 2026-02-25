@@ -19,10 +19,10 @@ export default function Footer() {
                         <a href="#" className="p-3 bg-slate-50 rounded-xl text-slate-400 hover:text-blue-500 hover:bg-blue-50 transition-all">
                             <Twitter size={20} />
                         </a>
-                        <a href="#" className="p-3 bg-slate-50 rounded-xl text-slate-400 hover:text-blue-500 hover:bg-blue-50 transition-all">
+                        <a href="https://www.linkedin.com/in/rachit-tiwari-3319ba312/" target="_blank" rel="noopener noreferrer" className="p-3 bg-slate-50 rounded-xl text-slate-400 hover:text-blue-500 hover:bg-blue-50 transition-all">
                             <Linkedin size={20} />
                         </a>
-                        <a href="#" className="p-3 bg-slate-50 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all">
+                        <a href="https://github.com/Rachit-Tiwari-7/Fish-Pish" target="_blank" rel="noopener noreferrer" className="p-3 bg-slate-50 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all">
                             <Github size={20} />
                         </a>
                     </div>
