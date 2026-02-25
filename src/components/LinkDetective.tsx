@@ -90,8 +90,55 @@ export default function LinkDetective() {
                 })
             });
             const data = await res.json();
-            setResult(data);
-            setLogs(prev => [...prev, `[SYSTEM] Scan Complete. Verdict: ${data.status}`]);
+
+            // Map backend response to the UI's expected format
+            const prob = data.phishing_probability ?? 0;
+            let status = 'SAFE';
+            if (prob >= 70) status = 'DANGEROUS';
+            else if (prob >= 30) status = 'SUSPICIOUS';
+
+            const reasons: { type: string; detail: string }[] = [];
+
+            if (data.details?.ssl_analysis) {
+                const ssl = data.details.ssl_analysis;
+                reasons.push({
+                    type: 'SSL',
+                    detail: ssl.secure
+                        ? `Secure — Issued by ${ssl.issuer}, valid for ${ssl.ageDays} days`
+                        : `Insecure — ${ssl.isSelfSigned ? 'Self-signed certificate' : 'Invalid certificate'}`
+                });
+            }
+
+            if (data.details?.llm && !data.details.llm.skipped) {
+                reasons.push({
+                    type: 'AI',
+                    detail: data.details.llm.reasoning || 'No reasoning provided'
+                });
+            }
+
+            if (data.details?.safe_browsing) {
+                reasons.push({
+                    type: 'SAFE_BROWSING',
+                    detail: data.signals?.safe_browsing_skipped
+                        ? 'Safe Browsing check was skipped'
+                        : 'Safe Browsing check completed'
+                });
+            }
+
+            const mapped = {
+                status,
+                overall_score: 100 - prob,
+                details: {
+                    explanation: data.summary || 'No summary available',
+                    ai_results: {
+                        reasons,
+                        llm_explanation: data.details?.llm?.reasoning || ''
+                    }
+                }
+            };
+
+            setResult(mapped);
+            setLogs(prev => [...prev, `[SYSTEM] Scan Complete. Verdict: ${status}`]);
         } catch (error) {
             console.error(error);
             setLogs(prev => [...prev, `[ERROR] Connection Failed.`]);
