@@ -37,12 +37,12 @@ export default function Chatbot() {
         setIsLoading(true);
 
         try {
-            const response = await fetch('https://rachit-tw-fish-pish.hf.space/chat', {
+            const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     message: userMessage,
-                    history: messages.slice(-5).map(m => ({ role: m.role === 'bot' ? 'assistant' : 'user', content: m.content }))
+                    history: messages.map(m => ({ role: m.role === 'bot' ? 'assistant' : 'user', content: m.content }))
                 })
             });
 
@@ -179,12 +179,9 @@ export default function Chatbot() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setIsOpen(true)}
-                    className="bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:bg-blue-700 transition-all group flex items-center gap-2"
+                    className="bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:bg-blue-700 transition-all flex items-center justify-center"
                 >
                     <MessageSquare size={24} />
-                    <span className="font-bold pr-2 max-w-0 overflow-hidden group-hover:max-w-[200px] transition-all duration-300 whitespace-nowrap">
-                        Ask a Doubt
-                    </span>
                 </motion.button>
             )}
         </div>
