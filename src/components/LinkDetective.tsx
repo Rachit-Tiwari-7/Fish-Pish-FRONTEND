@@ -90,8 +90,26 @@ export default function LinkDetective() {
                 })
             });
             const data = await res.json();
-            setResult(data);
-            setLogs(prev => [...prev, `[SYSTEM] Scan Complete. Verdict: ${data.status}`]);
+
+            // Normalize data for the premium UI
+            const normalizedData = {
+                ...data,
+                overall_score: data.overall_score ?? data.phishing_probability ?? 0,
+                status: data.status ?? (data.phishing_probability > 75 ? 'DANGER' : data.phishing_probability > 40 ? 'SUSPICIOUS' : 'SAFE'),
+                details: {
+                    ...data.details,
+                    explanation: data.details?.explanation ?? data.summary ?? "Analysis complete.",
+                    ai_results: data.details?.ai_results ?? {
+                        llm_explanation: data.details?.llm?.reasoning ?? data.summary,
+                        reasons: [
+                            { type: 'SIGNAL', detail: data.summary || "Technical analysis performed." }
+                        ]
+                    }
+                }
+            };
+
+            setResult(normalizedData);
+            setLogs(prev => [...prev, `[SYSTEM] Scan Complete. Verdict: ${normalizedData.status}`]);
         } catch (error) {
             console.error(error);
             setLogs(prev => [...prev, `[ERROR] Connection Failed.`]);
@@ -261,8 +279,8 @@ export default function LinkDetective() {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0 }}
                                 className={`rounded-xl border p-6 ${result.status === 'SAFE' ? 'bg-green-900/20 border-green-500/50' :
-                                        result.status === 'SUSPICIOUS' ? 'bg-yellow-900/20 border-yellow-500/50' :
-                                            'bg-red-900/20 border-red-500/50'
+                                    result.status === 'SUSPICIOUS' ? 'bg-yellow-900/20 border-yellow-500/50' :
+                                        'bg-red-900/20 border-red-500/50'
                                     }`}
                             >
                                 <div className="flex items-center gap-3 mb-4">
@@ -272,8 +290,8 @@ export default function LinkDetective() {
                                     <div>
                                         <div className="text-sm text-slate-400 uppercase font-bold">VERDICT</div>
                                         <div className={`text-xl font-bold ${result.status === 'SAFE' ? 'text-green-400' :
-                                                result.status === 'SUSPICIOUS' ? 'text-yellow-400' :
-                                                    'text-red-400'
+                                            result.status === 'SUSPICIOUS' ? 'text-yellow-400' :
+                                                'text-red-400'
                                             }`}>{result.status}</div>
                                     </div>
                                     <div className="ml-auto text-2xl font-bold text-slate-500">
