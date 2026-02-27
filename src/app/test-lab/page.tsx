@@ -60,7 +60,6 @@ const curatedLinks = [
 const rawLinks = [
     { url: 'https://github.com', type: 'safe' },
     { url: 'https://www.nytimes.com', type: 'safe' },
-    { url: 'https://www.roblox.com.py/login?returnUrl=7409172085502969', type: 'unsafe' },
     { url: 'http://account-update-portal.net', type: 'unsafe' },
     { url: 'https://secure-login-steam.top', type: 'unsafe' }
 ];
