@@ -3,8 +3,9 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Download, Shield, Eye, Zap, Chrome, CheckCircle, ArrowRight } from 'lucide-react';
+import { Download, Shield, Eye, Zap, Chrome, CheckCircle, ArrowRight, FlaskConical } from 'lucide-react';
 
 const features = [
     {
@@ -89,6 +90,13 @@ export default function ExtensionPage() {
                                     <Download size={22} />
                                     Download Extension
                                 </a>
+                                <Link
+                                    href="/test-lab"
+                                    className="inline-flex items-center gap-2 px-6 py-4 bg-slate-900 text-white rounded-2xl font-semibold border border-transparent shadow-sm hover:bg-slate-800 transition-all hover:scale-105"
+                                >
+                                    <FlaskConical size={18} />
+                                    Test Our Extension
+                                </Link>
                                 <a
                                     href="#how-to-install"
                                     className="inline-flex items-center gap-2 px-6 py-4 bg-white text-slate-700 rounded-2xl font-semibold border border-slate-200 shadow-sm hover:border-slate-300 hover:bg-slate-50 transition-all"

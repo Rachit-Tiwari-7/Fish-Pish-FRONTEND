@@ -41,20 +41,26 @@ export default function Chatbot() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    message: userMessage,
-                    history: messages.map(m => ({ role: m.role === 'bot' ? 'assistant' : 'user', content: m.content }))
+                    messages: [
+                        ...messages.map(m => ({
+                            role: m.role === 'bot' ? 'assistant' : 'user',
+                            content: m.content
+                        })),
+                        { role: 'user', content: userMessage }
+                    ]
                 })
             });
 
             const data = await response.json();
-            if (data.reply) {
-                setMessages(prev => [...prev, { role: 'bot', content: data.reply }]);
+
+            if (data.choices && data.choices[0]?.message?.content) {
+                setMessages(prev => [...prev, { role: 'bot', content: data.choices[0].message.content }]);
             } else {
-                throw new Error('No reply from assistant');
+                throw new Error(data.error || 'Failed to get a response from the AI');
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Chat error:', error);
-            setMessages(prev => [...prev, { role: 'bot', content: "Sorry, I'm having trouble connecting to my brain right now. Please try again later!" }]);
+            setMessages(prev => [...prev, { role: 'bot', content: `Error: ${error.message || "I'm having trouble connecting to the assistant. Please check your GROQ_API_KEY in Vercel."}` }]);
         } finally {
             setIsLoading(false);
         }
@@ -179,9 +185,12 @@ export default function Chatbot() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setIsOpen(true)}
-                    className="bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:bg-blue-700 transition-all flex items-center justify-center"
+                    className="bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:bg-blue-700 transition-all group flex items-center gap-2"
                 >
                     <MessageSquare size={24} />
+                    <span className="font-bold pr-2 max-w-0 overflow-hidden group-hover:max-w-[200px] transition-all duration-300 whitespace-nowrap">
+                        Ask a Doubt
+                    </span>
                 </motion.button>
             )}
         </div>
